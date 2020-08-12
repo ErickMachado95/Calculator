@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <meta name="author" content="">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+
+    html,body{
+      height: 100%;
+      width: auto;
+      background-color: blue;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #calcContainer{
+      display: grid;
+      height: 500px;
+      width: 500px;
+      background-color: grey;
+      border:solid;
+      border-color: black;
+      border-radius: 10%;
+    }
+
+    #display{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 50px;
+      width: 480px;
+      margin-top: 10px;
+      background-color: white;
+      border-radius: 75%;
+      justify-self: center;
+      align-self: start;
+    }
+
+    #keypad{
+      display:flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #funcKeys{
+      display:flex; 
+      justify-content: center;
+    }
+    button{
+      margin: 2.5px 5px 2.5px 5px; 
+      align-self: center;
+      height: 50px;
+      width: 50px;
+    }
+   
+   .buttonFormat{
+     color: blue;
+   }
+  </style>
+
+</head>
+
+<body>
+  <div>
+    <div id = "calcContainer">
+        <div id= "display">-</div>
+          <div id="funcKeys" data-row = "functionalityKeys"> </div>
+          <div id = "keypad" data-row = "keypad"></div>
+        </div>
+    </div>
+  </div>
+
+</body>
+
+<script>
+  let NUMB1 = 0 , NUMB2 = 0, OPERTAOR = "+";
+  let RESETED = true;
+  function add(a,b){
+    return a+b; 
+  }
+
+  function subtract(a,b){
+    return a-b;
+  }
+
+  function mulitply(a,b){
+    return a*b; 
+  }
+
+  function divide(a,b){
+    return Math.floor(a/b);
+  }
+
+  function operate(operator,operand1,operand2){
+    let result;
+    switch(operator){
+      case "+":
+        result = add(operand1,operand2);
+        break;
+      case "-":
+        result = subtract(operand1,operand2);
+        break;
+      case "*":
+        result = mulitply(operand1,operand2);
+        break;
+      case "/":
+        result = divide(operand1,operand2); 
+        break;
+    }
+    return result;
+  }
+
+  function createFunctButtons(name,func){
+    const bttn = document.createElement("button");
+    bttn.textContent = name;
+    bttn.addEventListener('click',func); 
+    return bttn; 
+  }
+
+  function clearDisplay(){
+    const disp = document.querySelector("#display"); 
+    disp.textContent = "0"; 
+    NUMB1 = 0 ; 
+    NUMB2 = 0 ; 
+    OPERTAOR = "+"
+  }
+
+  function changeOperator(e){
+    OPERTAOR = e.target.textContent; 
+    const disp = document.querySelector("#display");
+    NUMB1 = parseInt(disp.textContent); 
+    RESETED = true;
+  }
+
+  function addNumToDisplay(e){
+      let addedNum = e.target.getAttribute("data-key"); 
+      const disp = document.querySelector("#display"); 
+      let text = disp.textContent; 
+      if(text.length >= 10){
+        return; 
+      }
+      if(RESETED){
+        text = addedNum;
+        RESETED = false;
+      }else{
+        text += addedNum; 
+      }
+      disp.textContent = text; 
+  }
+
+  function equateAndDisplay(){
+    const disp = document.querySelector("#display"); 
+    let num = parseInt(disp.textContent); 
+    if(num === NaN)
+      return; 
+    NUMB2 = num; 
+    let result = operate(OPERTAOR,NUMB1,NUMB2); 
+    disp.textContent = String(result);
+    RESETED = true;
+  }
+  function setUpFunctionalityKeys(){
+    const funcRow = document.querySelector("[data-row='functionalityKeys']");
+    let funcKeyButton = {
+      "C":clearDisplay,
+      "+":changeOperator,
+      "-":changeOperator,
+      "*":changeOperator,
+      "/":changeOperator,
+      "=":equateAndDisplay,
+      }
+    let entries = Object.entries(funcKeyButton); 
+    for(const [key,val] of entries){
+      const bttn = createFunctButtons(key,val); 
+      bttn.classList.add("buttonFormat");
+      funcRow.appendChild(bttn);
+    }
+
+  }
+
+ 
+  function setUpKeypad(){
+    const keypad = document.querySelector("[data-row='keypad']");
+    let r0 = document.createElement("div"); 
+    for(let i = 1 ; i < 4; i++){
+      let bttn = createFunctButtons(String(i),addNumToDisplay);
+      bttn.setAttribute("data-key",String(i));  
+      r0.appendChild(bttn); 
+    }
+    let r1 = document.createElement("div"); 
+    for(let i = 4 ; i < 7; i++){
+      let bttn = createFunctButtons(String(i),addNumToDisplay); 
+      bttn.setAttribute("data-key",String(i)); 
+      r1.appendChild(bttn); 
+    }
+    let r2 = document.createElement("div"); 
+    for(let i = 7; i <10 ; i++){
+      let bttn = createFunctButtons(String(i),addNumToDisplay);
+      bttn.setAttribute("data-key",String(i));  
+      r2.appendChild(bttn); 
+    }
+
+    let r3 = document.createElement("div");
+    let bttn = createFunctButtons("0",addNumToDisplay);
+    bttn.setAttribute("data-key","0"); 
+    r3.appendChild(bttn); 
+
+    keypad.appendChild(r0); 
+    keypad.appendChild(r1); 
+    keypad.appendChild(r2); 
+    keypad.appendChild(r3); 
+
+  }
+ 
+  setUpFunctionalityKeys();
+  setUpKeypad();
+
+</script>
+
+</html>
