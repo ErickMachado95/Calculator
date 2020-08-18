@@ -13,74 +13,194 @@
     html,body{
       height: 100%;
       width: auto;
-      background-color: blue;
+      background-color: lightcoral;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
-    #calcContainer{
+    #calculator-container{
       display: grid;
-      height: 500px;
+      grid-template-columns: repeat(4,1fr);
+      grid-template-rows: repeat(7,1fr);
+      grid-template-areas: 
+        "display display display display"
+        "display display display display"
+        "clear clear backspace backspace"
+        "digit7 digit8 digit9 addition"
+        "digit4 digit5 digit6 subtraction"
+        "digit1 digit2 digit3 multiplication"
+        "digit0 deci equals division";
+
+      height: 600px;
       width: 500px;
-      background-color: grey;
+      background-color: lightgrey;
       border:solid;
-      border-color: black;
-      border-radius: 10%;
+      border-color: grey;
+      border-width: 10px;
+      box-shadow: 10px 10px 10px;
+      border-radius: 2.5%;
     }
 
-    #display{
+
+
+    .display{
+      grid-area: display;
       display: flex;
+      justify-content: right;
       align-items: center;
-      justify-content: center;
-      height: 50px;
-      width: 480px;
-      margin-top: 10px;
-      background-color: white;
-      border-radius: 75%;
-      justify-self: center;
-      align-self: start;
+      background-color: #a2c15c;
+      border: solid;
+      border-color: black;
+      margin: 1px 1px 1px 1px;
+      border-radius: 10px;
+      font-size: 50px;
+    }
+
+    #display-text{
+      margin-right: 10px;
+    }
+    .clear{
+      grid-area: clear;
+    
+    }
+
+    .backspace{
+      grid-area: backspace;
+    }
+    
+    .digit0{
+      grid-area: digit0;
+    }
+  
+    .digit1{
+      grid-area: digit1;
+    }
+
+    .digit2{
+      grid-area: digit2;
+    }
+    
+    .digit3{
+      grid-area: digit3;
+    }
+
+    .digit4{
+      grid-area: digit4;
+    }
+
+    .digit5{
+      grid-area: digit5;
+    }
+
+    .digit6{
+      grid-area: digit6;
+    }
+
+    .digit7{
+      grid-area: digit7;
+    }
+
+    .digit8{
+      grid-area: digit8;
+    }
+
+    .digit9{
+      grid-area: digit9;
+    }
+
+    .decimal{
+      grid-area: deci;
+    }
+
+    .equals{
+      grid-area: equals;
+    }
+
+    .addition{
+      grid-area: addition;
+    }
+
+    .subtraction{
+      grid-area: subtraction;
+    }
+
+    .multiplication{
+      grid-area: multiplication;
+    }
+
+    .division{
+      grid-area: division;
     }
 
     #keypad{
       display:flex;
       flex-direction: column;
-      align-items: center;
     }
 
-    #funcKeys{
-      display:flex; 
-      justify-content: center;
+    .digit-buttons{
+      border-radius: 10px;
+      font-size: large;
     }
-    button{
-      margin: 2.5px 5px 2.5px 5px; 
-      align-self: center;
-      height: 50px;
-      width: 50px;
+
+    .operator-buttons{
+      background-color: lightblue;
+      border-radius: 10px;
+      font-size: xx-large;
+    }
+
+    .special-buttons{
+      background-color: lightblue;
+      border-radius: 10px;
+      font-size: xx-large;
+    }
+
+    .function-buttons{
+      background-color: lightcoral; 
+      border-radius: 10px;
+      font-size: x-large;
+      
     }
    
-   .buttonFormat{
-     color: blue;
-   }
+  
   </style>
 
 </head>
 
 <body>
   <div>
-    <div id = "calcContainer">
-        <div id= "display">-</div>
-          <div id="funcKeys" data-row = "functionalityKeys"> </div>
-          <div id = "keypad" data-row = "keypad"></div>
-        </div>
+    <div id = "calculator-container">
+      <div class= "display"><span id="display-text"></span></div>
+      <button class="clear function-buttons">C </button>
+      <button class ="backspace function-buttons">&#8594</button>
+      <button class="digit0 digit-buttons">0</button>
+      <button class="digit1 digit-buttons">1</button>
+      <button class="digit2 digit-buttons">2</button>
+      <button class="digit3 digit-buttons">3</button>
+      <button class="digit4 digit-buttons">4</button>
+      <button class="digit5 digit-buttons">5</button>
+      <button class="digit6 digit-buttons">6</button>
+      <button class="digit7 digit-buttons">7</button>
+      <button class="digit8 digit-buttons">8</button>
+      <button class="digit9 digit-buttons">9</button>
+      <button class="decimal special-buttons">.</button>
+      <button class="equals special-buttons">=</button>
+      <button class="addition operator-buttons">+</button>
+      <button class="subtraction operator-buttons">-</button> 
+      <button class="multiplication operator-buttons">*</button>
+      <button class="division operator-buttons">/</button>
     </div>
   </div>
 
 </body>
 
 <script>
-  let NUMB1 = 0 , NUMB2 = 0, OPERTAOR = "+";
+  
+  let OPERAND1 = 0 , OPERAND2 = 0, OPERATOR = "";
   let RESETED = true;
+  let FLOAT_ON = false;
+  let OVERRIDE_DISPLAY = true;
+  let EVALUATE_AND_CHANGE = false; 
   function add(a,b){
     return a+b; 
   }
@@ -94,7 +214,16 @@
   }
 
   function divide(a,b){
-    return Math.floor(a/b);
+    if(b == 0)
+      return NaN; 
+    
+    let r =  a/b;
+    
+    return r;
+  }
+
+  function isFloat(n){
+    return n % 1 !== 0; 
   }
 
   function operate(operator,operand1,operand2){
@@ -112,6 +241,9 @@
       case "/":
         result = divide(operand1,operand2); 
         break;
+      default:
+        result = null;
+        break;
     }
     return result;
   }
@@ -123,102 +255,109 @@
     return bttn; 
   }
 
-  function clearDisplay(){
-    const disp = document.querySelector("#display"); 
-    disp.textContent = "0"; 
-    NUMB1 = 0 ; 
-    NUMB2 = 0 ; 
-    OPERTAOR = "+"
-  }
+  
 
   function changeOperator(e){
-    OPERTAOR = e.target.textContent; 
-    const disp = document.querySelector("#display");
-    NUMB1 = parseInt(disp.textContent); 
-    RESETED = true;
+    const disp = document.querySelector("#display-text");
+    if(disp.textContent == "")
+      return;
+
+    if(EVALUATE_AND_CHANGE){
+      OPERAND2 = parseFloat(disp.textContent); 
+      equateAndDisplay(); 
+    }
+
+    OPERATOR = e.target.textContent;    
+    EVALUATE_AND_CHANGE = true; 
+    OVERRIDE_DISPLAY = true;
   }
 
-  function addNumToDisplay(e){
-      let addedNum = e.target.getAttribute("data-key"); 
-      const disp = document.querySelector("#display"); 
-      let text = disp.textContent; 
-      if(text.length >= 10){
-        return; 
-      }
-      if(RESETED){
-        text = addedNum;
-        RESETED = false;
-      }else{
-        text += addedNum; 
-      }
-      disp.textContent = text; 
-  }
 
   function equateAndDisplay(){
-    const disp = document.querySelector("#display"); 
-    let num = parseInt(disp.textContent); 
-    if(num === NaN)
-      return; 
-    NUMB2 = num; 
-    let result = operate(OPERTAOR,NUMB1,NUMB2); 
+    const disp = document.querySelector("#display-text"); 
+    let result = operate(OPERATOR,OPERAND1,OPERAND2); 
     disp.textContent = String(result);
-    RESETED = true;
   }
   function setUpFunctionalityKeys(){
-    const funcRow = document.querySelector("[data-row='functionalityKeys']");
-    let funcKeyButton = {
-      "C":clearDisplay,
-      "+":changeOperator,
-      "-":changeOperator,
-      "*":changeOperator,
-      "/":changeOperator,
-      "=":equateAndDisplay,
-      }
-    let entries = Object.entries(funcKeyButton); 
-    for(const [key,val] of entries){
-      const bttn = createFunctButtons(key,val); 
-      bttn.classList.add("buttonFormat");
-      funcRow.appendChild(bttn);
+    const backspaceButton = document.querySelector(".backspace"); 
+    backspaceButton.addEventListener("click",onBackSpace);
+    
+    const clearButton = document.querySelector(".clear"); 
+    clearButton.addEventListener("click",onClear); 
+
+    const equalsButton = document.querySelector(".equals"); 
+    equalsButton.addEventListener("click",onEquatePress); 
+
+    const decimalButton = document.querySelector(".decimal"); 
+    decimalButton.addEventListener("click",onDecimalPress); 
+
+    const operatorButtons = Array.from(document.querySelectorAll(".operator-buttons"));
+    operatorButtons.forEach(b => b.addEventListener("click",changeOperator)); 
+  }
+
+  function onEquatePress(e){
+    if(!EVALUATE_AND_CHANGE){
+      return;
     }
+
+    const disp = document.querySelector("#display-text");
+    FLOAT_ON ? OPERAND2 = parseFloat(disp.textContent) : OPERAND2 = parseInt(disp.textContent); 
+    equateAndDisplay(); 
+    EVALUATE_AND_CHANGE = false;
+    OVERRIDE_DISPLAY = true;
 
   }
 
+  function onDigitPress(e){
+    const stringNum = e.target.textContent;
+    let displayText = document.querySelector("#display-text"); 
+    if(OVERRIDE_DISPLAY){
+      displayText.textContent = stringNum
+    }
+    else if(displayText.textContent.length < 10){
+      displayText.textContent += stringNum;
+    }
+
+    OVERRIDE_DISPLAY = false;
+  }
+
+  function onBackSpace(){
+    const displayText = document.querySelector("#display-text");
+    let s = displayText.textContent;
+    if(s.length != 0){
+      s = s.substring(0,s.length-1);
+    }
+    displayText.textContent = s;
+  }
+
+  function onDecimalPress(){
+    if(FLOAT_ON)
+      return;
+    FLOAT_ON = true;
+    const disp = document.querySelector("#display-text");
+    OVERRIDE_DISPLAY?  disp.textContent = "0." : disp.textContent += "." 
+    OVERRIDE_DISPLAY = false;
+  }
+  function onClear(){
+    const disp = document.querySelector("#display-text"); 
+    disp.textContent = ""; 
+    OVERRIDE_DISPLAY = true;
+    EVALUATE_AND_CHANGE = false; 
+    FLOAT_ON = false;
+    OPERAND1 = 0; 
+    OPERAND2 = 0;
+    OPERATOR = ""; 
+
+  }
  
-  function setUpKeypad(){
-    const keypad = document.querySelector("[data-row='keypad']");
-    let r0 = document.createElement("div"); 
-    for(let i = 1 ; i < 4; i++){
-      let bttn = createFunctButtons(String(i),addNumToDisplay);
-      bttn.setAttribute("data-key",String(i));  
-      r0.appendChild(bttn); 
-    }
-    let r1 = document.createElement("div"); 
-    for(let i = 4 ; i < 7; i++){
-      let bttn = createFunctButtons(String(i),addNumToDisplay); 
-      bttn.setAttribute("data-key",String(i)); 
-      r1.appendChild(bttn); 
-    }
-    let r2 = document.createElement("div"); 
-    for(let i = 7; i <10 ; i++){
-      let bttn = createFunctButtons(String(i),addNumToDisplay);
-      bttn.setAttribute("data-key",String(i));  
-      r2.appendChild(bttn); 
-    }
-
-    let r3 = document.createElement("div");
-    let bttn = createFunctButtons("0",addNumToDisplay);
-    bttn.setAttribute("data-key","0"); 
-    r3.appendChild(bttn); 
-
-    keypad.appendChild(r0); 
-    keypad.appendChild(r1); 
-    keypad.appendChild(r2); 
-    keypad.appendChild(r3); 
-
+  function setUpDigits(){
+    const digitArray = Array.from(document.querySelectorAll(".digit-buttons")); 
+    digitArray.forEach(b => b.addEventListener("click",onDigitPress));
   }
  
   setUpFunctionalityKeys();
-  setUpKeypad();
+  setUpDigits();
+
 
 </script>
 
